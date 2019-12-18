@@ -4,9 +4,11 @@
   "description": "Digest stream or file with any hashing algorithm",
   "main": "lib/index.js",
   "scripts": {
+    "postversion": "npm publish --tag=next",
+    "postpublish": "git push origin --all; git push origin --tags",
+    "preversion": "npm test",
     "lint": "eslint --ext .js ./lib ./hex",
-    "test": "jest",
-    "prepublishOnly": "yarn run lint && yarn run test"
+    "test": "jest"
   },
   "pre-commit": {
     "colors": true,
