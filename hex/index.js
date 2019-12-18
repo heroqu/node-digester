@@ -1,8 +1,8 @@
 /**
  * Same factories but with 'hex' digest format preselected
  */
-const fileDigesterFull = require('./file');
-const streamDigesterFull = require('./stream');
+const fileDigesterFull = require('./../lib/file');
+const streamDigesterFull = require('./../lib/stream');
 
 module.exports = {
   fileDigester: createHash => fileDigesterFull(createHash, 'hex'),

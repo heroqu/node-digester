@@ -1,6 +1,6 @@
 const { Readable } = require('stream');
 const { createHash } = require('crypto');
-const { streamDigester } = require('../lib/hex');
+const { streamDigester } = require('../hex');
 
 // non-cryptographic hash algorothms
 const metrohash = require('./hashes/metrohash');

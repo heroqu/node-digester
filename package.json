@@ -4,7 +4,7 @@
   "description": "Digest stream or file with any hashing algorithm",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint --ext .js ./lib",
+    "lint": "eslint --ext .js ./lib ./hex",
     "test": "jest",
     "prepublishOnly": "yarn run lint && yarn run test"
   },

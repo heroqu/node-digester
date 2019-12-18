@@ -1,6 +1,6 @@
 const path = require('path');
 const { createHash } = require('crypto');
-const { fileDigester } = require('../lib/hex');
+const { fileDigester } = require('../hex');
 
 const EMPTY_FILE = path.resolve(__dirname, './samples/empty.txt');
 const SAMPLE_FILE = path.resolve(__dirname, './samples/sample.txt');
