@@ -4,7 +4,7 @@
   "description": "Digest stream or file with any hashing algorithm",
   "main": "lib/index.js",
   "scripts": {
-    "postversion": "npm publish --tag=next",
+    "postversion": "npm publish",
     "postpublish": "git push origin --all; git push origin --tags",
     "preversion": "npm test",
     "lint": "eslint --ext .js ./lib ./hex",
