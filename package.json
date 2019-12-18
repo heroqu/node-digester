@@ -1,0 +1,54 @@
+{
+  "name": "digester",
+  "version": "1.0.1",
+  "description": "Digest stream or file with any hashing algorithm",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint --ext .js ./lib",
+    "test": "jest",
+    "prepublishOnly": "yarn run lint && yarn run test"
+  },
+  "pre-commit": {
+    "colors": true,
+    "run": [
+      "lint",
+      "test"
+    ],
+    "silent": false
+  },
+  "dependencies": {
+    "hash-through": "^0.1.16",
+    "readable-stream": "^3.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.7.2",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-import": "^2.19.1",
+    "jest": "^24.9.0",
+    "metrohash": "^2.6.0",
+    "murmurhash-native": "^3.4.1",
+    "pre-commit": "^1.2.2",
+    "xxhash": "^0.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heroqu/node-digester.git"
+  },
+  "bugs": {
+    "url": "https://github.com/heroqu/node-digester/issues"
+  },
+  "homepage": "https://github.com/heroqu/node-digester#readme",
+  "keywords": [
+    "digest",
+    "hash",
+    "hasher",
+    "algorithm",
+    "stream",
+    "file",
+    "crypto",
+    "non-crypto"
+  ],
+  "author": "Heroqu",
+  "license": "MIT"
+}
