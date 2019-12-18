@@ -49,7 +49,15 @@
     "stream",
     "file",
     "crypto",
-    "non-crypto"
+    "sha",
+    "sha1",
+    "sha256",
+    "sha512",
+    "md5",
+    "ripemd",
+    "metrohash",
+    "xxhash",
+    "murmurhash"
   ],
   "author": "Heroqu",
   "license": "MIT"
