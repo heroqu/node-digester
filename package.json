@@ -44,20 +44,20 @@
   "keywords": [
     "digest",
     "hash",
-    "hasher",
-    "algorithm",
     "stream",
     "file",
-    "crypto",
     "sha",
-    "sha1",
+    "sha3",
     "sha256",
     "sha512",
     "md5",
     "ripemd",
     "metrohash",
     "xxhash",
-    "murmurhash"
+    "murmurhash",
+    "hasher",
+    "crypto",
+    "algorithm"
   ],
   "author": "Heroqu",
   "license": "MIT"

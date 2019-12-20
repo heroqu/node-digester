@@ -40,7 +40,7 @@ const digestPromise = digester(someReadableStream);
 
 ### Digesting files
 
-We have to prepare some hashing function in advance. For the sake of an example let's use one of the algorithms from Node.crypto module, but that is not at all required - any hashing algorithm would do, see [Algorithms section](https://github.com/heroqu/node-digester#hash-algorithms) below for details:
+We have to prepare some hashing function in advance. For the sake of an example let's use one of the algorithms from Node.crypto module, but that is not at all required - any hashing algorithm would do, see [Hash algorithms section](#hash-algorithms) below for details:
 
 ```javascript
 const { fileDigester } = require('digester/hex');
