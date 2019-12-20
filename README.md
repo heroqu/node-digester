@@ -218,7 +218,7 @@ One has to prepare a wrapper function that would return a so called Hash object,
 
 Good news is that many existing implementations are able to produce that out-of-the-box or with little tinkering.
 
-Let's try to plug in [metrohash](https://www.npmjs.com/package/metrohash) module as an example. This module implements same named algorithm (see it in [wikipedia](https://en.m.wikipedia.org/wiki/List_of_hash_functions)), which is a non-cryptographic hash by the way. Here we are:
+Let's try to plug in [metrohash](https://www.npmjs.com/package/metrohash) module as an example. The module is a "wrapper around [MetroHash](https://github.com/jandrewrogers/MetroHash)" algorithm as stated on its site, which is a non-cryptographic hash by the way. Here we are:
 
 ```javascript
 const { MetroHash128 } = require('metrohash');
