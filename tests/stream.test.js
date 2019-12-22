@@ -10,7 +10,7 @@ const murmur3_native_128_64_le = require('./hashes/murmur3_native_128_64_le');
 
 const sampleText = 'On 25 March an unusually strange event occurred';
 
-describe('Stream Digester', () => {
+describe('Stream Digester with hex format preselected', () => {
   describe('with Node.crypto hashes', () => {
     it('should work with zero length stream & sha256 algorithm', async () => {
       // make a stream digester instance
