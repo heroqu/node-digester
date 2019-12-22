@@ -79,7 +79,7 @@ const createHashFn = () => createHash('sha256');
 const digester = streamDigester(createHashFn);
 
 const { Readable } = require('stream');
-const rs = Readable.from('Make a sample readable stream form this text');
+const rs = Readable.from('Make a sample readable stream from this text');
 
 digester(rs).then(console.log);
 
@@ -91,7 +91,7 @@ digester(rs).then(console.log);
 
 Needless to say that the original stream is going to be consumed in this digesting procedure.
 
-If that is not acceptable, one might consider a **slightly different approach**: compute the hash digest _on the fly_, while it is being naturally consumed as was implied by application logic. To do that one can use [hash-through](http://nodejs.com/heroqu/hash-through) module, the one that is actually being used by the Digester under the hood.
+If for some reason that is not desirable, one might consider a **slightly different approach**: compute the hash digest _on the fly_, while it is being naturally consumed as it was implied by application logic. To do that one can use [hash-through](http://nodejs.com/heroqu/hash-through) module, the one that is actually being used by the Digester under the hood.
 
 Consider an example:
 
@@ -104,9 +104,9 @@ const createHashFn = () => createHash('sha256');
 const ht = hashThrough(createHashFn);
 
 // just created a PassThrough stream able to digest the data traffic
-// on the go, while application does consume it:
+// on the fly, while application does consume it:
 
-// insert `.pipe(ht)` as man-in-the-middle
+// .pipe(ht) acts like man-in-the-middle
 someSrc.pipe(ht).pipe(someDest);
 
 const digestPromise = new Promise(resolve => {
@@ -123,7 +123,7 @@ digestPromise.then(digest => {
 });
 ```
 
-Imagine you receive audio stream from one remote and pass it through to some other remote. With this approach you just tap and when the streaming is over you got the hash digest ready.
+Imagine you receive audio stream from one remote and pass it through to some other remote. With this approach you just tap and when the streaming is over you got the hash digest ready. You application logic doesn't suffer.
 
 ## Hash algorithms
 
@@ -212,13 +212,17 @@ That will print out a long list (at the time of writing):
 ]
 ```
 
+and all of them are ready to be used here.
+
 ### Other algorithms
 
-One has to prepare a wrapper function that would return a so called Hash object, an object similar to how it is made in Node.crypto (see [Hash class in Node docs](https://nodejs.org/api/crypto.html#crypto_class_hash)). Basically, Hash should be a Transform stream and support `update(chunk)` and `digest(format)` methods.
+There are many other libraries that provide hashing algorithms, but tp plug it in here we have to make sure it is i a form of createHash function. Such a function should return a so called Hash object, an object similar to how it is made in Node.crypto (see [Hash class in Node docs](https://nodejs.org/api/crypto.html#crypto_class_hash)). Basically, Hash should be a Transform stream and support `update(chunk)` and `digest(format)` methods.
 
 Good news is that many existing implementations are able to produce that out-of-the-box or with little tinkering.
 
-Let's try to plug in [metrohash](https://www.npmjs.com/package/metrohash) module as an example. The module is a "wrapper around [MetroHash](https://github.com/jandrewrogers/MetroHash)" algorithm as stated on its site, which is a non-cryptographic hash by the way. Here we are:
+Let's try to plug in [metrohash](https://www.npmjs.com/package/metrohash) npm module as an example. As stated on its site, the module is a "wrapper around [MetroHash algorithm](https://github.com/jandrewrogers/MetroHash)", which is a non-cryptographic hashing algorithm by the way.
+
+Here we are:
 
 ```javascript
 const { MetroHash128 } = require('metrohash');
@@ -239,34 +243,61 @@ A few more implementation examples can be found in the test directory.
 
 ## Digest formats
 
-If we use main constructor:
+If we use main constructor, then we are free to either specify `format` parameter explicitly:
 
 ```javascript
 const { fileDigester } = require('digester');
-const digester = streamDigester(createHashFunc, format);
+const digester = streamDigester(createHashFunc, <format>);
 // or
 const { streamDigester } = require('digester');
-const digester = streamDigester(createHashFunc, format);
+const digester = streamDigester(createHashFunc, <format>);
 ```
 
-then we can specify `format` parameter explicitly.
+or even  omit it, in some cases.
 
-It is `createHashFunc` that is responsible for producing a so called Hash object, which should have a `digest(format)` method. So the question of what formats are supported is then delegated to that implementation. Usually (as with Node.crypto Hash) such a method returns Buffer if no format is specified or `Buffer.toString(format)`, if format is specified. If that is the case, then you might want to omit format and get directly the Buffer, e.g.:
+The point is, it is `createHashFunc` that is responsible for producing a so called Hash object with its `Hash.digest(format)` method. Therefore the question of what formats are supported and if we can safely omit it - depends solely on that Hash implementation.
+
+### Formats for Node.crypto hashes
+
+E.g. if we choose an algorithm implementation from Node.crypto module (`const createHashFunc = () => crypto.createHash(<format>)`), then:
+
+- if format parameter is omitted, then bare Buffer is returned as digest value.
+
+Consider an example:
 
 ```javascript
 const { fileDigester } = require('digester');
 const { createHash } = require('crypto');
 const createHashFn = () => createHash('ripemd160');
-const digester = fileDigester(createHashFn); // omit format parameter
+const digester = fileDigester(createHashFn); // format parameter is omitted
 digester(__filename).then(console.log);
 // output:
 // <Buffer 72 e9 3e ce 63 e1 5d 5d ca f3 da 62 d8 cd f9 67 87 3c 56 34>
 ```
 
-If you choose curried version of digesters with 'hex' format pre-selected
+- if format parameter is there, then `Buffer.toString(format)` is going to be called internally, so one can use any format value `Buffer.toString` method does support:
 
-```javascript
-... = require('digester/hex');
+```
+'hex'
+'utf8'
+'ascii'
+'base64'
+'latin1' 
+'binary' (alias to 'latin1')
 ```
 
-then make sure that your chosen implementation support that, i.e. Hash.digest('hex') should not break. If it does break, then switch back to non-curried version and have full control over format parameter.
+See [Node official docs](https://nodejs.org/api/buffer.html#buffer_buf_tostring_encoding_start_end) for details.
+
+### Formats for other hashes
+
+With other hash algorithm implementaions one has to examine digest(format) method of Hash object, that particular createHashFunc is supposed to return.
+
+### Pre-selected HEX format
+
+As already mentioned, one can take advantage of curried version of the lib with 'hex' preselected:
+
+```javascript
+const { ... } = require('digester/hex');
+```
+
+Just be sure the Hash object that is returned from particular createHashFunc implementation does indeed support this format, i.e. Hash.digest('hex') does not break. If it does, then switch back to non-curried version.
