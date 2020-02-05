@@ -1,6 +1,6 @@
 {
   "name": "digester",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Digest stream or file with any hashing algorithm",
   "main": "lib/index.js",
   "scripts": {
