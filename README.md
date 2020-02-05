@@ -93,7 +93,7 @@ Needless to say that the original stream is going to be consumed in this digesti
 
 If for some reason that is not desirable, one might consider a **slightly different approach**: compute the hash digest _on the fly_, while it is being naturally consumed as it was implied by application logic. To do that one can use [hash-through](http://nodejs.com/heroqu/hash-through) module, the one that is actually being used by the Digester under the hood.
 
-Consider an example:
+Consider the example:
 
 ```javascript
 const hashThrough = require('hash-through');
@@ -216,7 +216,7 @@ and all of them are ready to be used here.
 
 ### Other algorithms
 
-There are many other libraries that provide hashing algorithms, but to plug then in here we have to make sure they are in a form of createHash function. Such a function should return a so called Hash object, an object similar to how it is made in Node.crypto (see [Hash class in Node docs](https://nodejs.org/api/crypto.html#crypto_class_hash)). Basically, Hash should be a Transform stream and support `update(chunk)` and `digest(format)` methods.
+There are many other libraries that provide hashing algorithms, but to plug them in here we have to make sure they are in a form of createHash function. Such a function should return a so called Hash object, an object similar to how it is made in Node.crypto (see [Hash class in Node docs](https://nodejs.org/api/crypto.html#crypto_class_hash)). Basically, Hash should be a Transform stream and support `update(chunk)` and `digest(format)` methods.
 
 Good news is that many existing implementations are able to produce that out-of-the-box or with little tinkering.
 
@@ -253,7 +253,7 @@ const { streamDigester } = require('digester');
 const digester = streamDigester(createHashFunc, <format>);
 ```
 
-or even  omit it, in some cases.
+or even omit it, in some cases.
 
 The point is, it is `createHashFunc` that is responsible for producing a so called Hash object with its `Hash.digest(format)` method. Therefore the question of what formats are supported and if we can safely omit it - depends solely on that Hash implementation.
 
@@ -263,30 +263,28 @@ E.g. if we choose an algorithm implementation from Node.crypto module (`const cr
 
 1. if format parameter is omitted, then bare `Buffer` is returned as digest value.
 
-Consider an example:
+  Consider the example:
 
-```javascript
-const { fileDigester } = require('digester');
-const { createHash } = require('crypto');
-const createHashFn = () => createHash('ripemd160');
-const digester = fileDigester(createHashFn); // format parameter is omitted
-digester(__filename).then(console.log);
-// output:
-// <Buffer 72 e9 3e ce 63 e1 5d 5d ca f3 da 62 d8 cd f9 67 87 3c 56 34>
-```
+  ```javascript
+  const { fileDigester } = require('digester');
+  const { createHash } = require('crypto');
+  const createHashFn = () => createHash('ripemd160');
+  const digester = fileDigester(createHashFn); // format parameter is omitted
+  digester(__filename).then(console.log);
+  // output:
+  // <Buffer 72 e9 3e ce 63 e1 5d 5d ca f3 da 62 d8 cd f9 67 87 3c 56 34>
+  ```
 
-2. if format parameter is there, then `Buffer.toString(format)` is going to be called internally, so one can use any format value `Buffer.toString` method does support:
+2. if format parameter is there, then `Buffer.toString(format)` is going to be called internally, so one can use any format value `Buffer.toString` method does support, namely (see [Node docs](https://nodejs.org/docs/latest/api/buffer.html#buffer_buffers_and_character_encodings)):
 
-```
-'hex'
-'utf8'
-'ascii'
-'base64'
-'latin1' 
-'binary' (alias to 'latin1')
-```
-
-See [Node official docs](https://nodejs.org/api/buffer.html#buffer_buf_tostring_encoding_start_end) for details.
+  - 'ascii'
+  - 'utf8'
+  - 'utf16le'
+  - 'ucs2' — alias of 'utf16le'
+  - 'base64'
+  - 'latin1'
+  - 'binary' — alias to 'latin1'
+  - 'hex'
 
 ### Formats for other hashes
 
